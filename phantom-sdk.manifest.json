@@ -1,0 +1,25 @@
+{
+  "schema": "phantom.sdk_manifest.v1",
+  "name": "PhantomSDK",
+  "authority": "ItsNotAILABS / NOVA",
+  "repo_role": "SDK packaging surface for external builders and local AIs",
+  "package_surfaces": [
+    "typescript-sdk",
+    "python-sdk",
+    "mcp-skill-pack",
+    "connector-client",
+    "runtime-contracts"
+  ],
+  "upstream_sources": [
+    "ItsNotAILABS/nova-intelligence",
+    "ItsNotAILABS/nexus",
+    "ItsNotAILABS/x-mcp-skills"
+  ],
+  "proof_gates": [
+    "install command documented",
+    "runtime contract versioned",
+    "connector boundary documented",
+    "example request and response included",
+    "package export does not claim undeployed services"
+  ]
+}
