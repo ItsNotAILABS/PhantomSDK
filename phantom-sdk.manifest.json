@@ -1,25 +1,42 @@
 {
-  "schema": "phantom.sdk_manifest.v1",
+  "schema": "phantom.sdk_manifest.v2",
   "name": "PhantomSDK",
   "authority": "ItsNotAILABS / NOVA",
-  "repo_role": "SDK packaging surface for external builders and local AIs",
+  "repo_role": "SDK packaging surface for external builders, local AIs, connector runtimes, and NOVA Build product surfaces",
   "package_surfaces": [
     "typescript-sdk",
     "python-sdk",
     "mcp-skill-pack",
     "connector-client",
-    "runtime-contracts"
+    "runtime-contracts",
+    "release-manifests",
+    "artifact-verification"
   ],
   "upstream_sources": [
     "ItsNotAILABS/nova-intelligence",
     "ItsNotAILABS/nexus",
-    "ItsNotAILABS/x-mcp-skills"
+    "ItsNotAILABS/x-mcp-skills",
+    "ItsNotAILABS/organism-bots-mcp-server"
   ],
+  "exports": {
+    "typescript": "packages/typescript/src/index.ts",
+    "python": "packages/python/phantom_sdk/__init__.py",
+    "release_manifest": "releases/v0.3.8/RELEASE_MANIFEST.json",
+    "package_surface_doc": "docs/PACKAGE_SURFACES.md"
+  },
   "proof_gates": [
     "install command documented",
     "runtime contract versioned",
     "connector boundary documented",
     "example request and response included",
-    "package export does not claim undeployed services"
+    "package export does not claim undeployed services",
+    "release checksums are recorded",
+    "binary upload status remains explicit"
+  ],
+  "next_gates": [
+    "add package build scripts",
+    "add SDK validation tests",
+    "upload v0.3.8 binary zips through Git-capable lane or GitHub Release assets",
+    "publish package docs for external builders"
   ]
 }
