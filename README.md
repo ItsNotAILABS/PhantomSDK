@@ -1,78 +1,120 @@
 # PhantomSDK
 
-![Status](https://img.shields.io/badge/status-contract%20first-blue)
-![SDK](https://img.shields.io/badge/sdk-typescript%20%2B%20python-6f42c1)
-![Release](https://img.shields.io/badge/release-v0.3.8-2f9e44)
-![Validator](https://img.shields.io/badge/validator-stdlib%20python-success)
-![Artifacts](https://img.shields.io/badge/binary%20artifacts-pending-orange)
+**Developer SDK and verification layer for NEXUS ecosystem protocols.**
 
-SDK packaging surface for NOVA external builders, local AIs, connector runtimes, and product surfaces.
+PhantomSDK gives applications and external developers a client-facing surface for capability discovery, schema validation, compatibility checks, receipt verification and release-evidence inspection without embedding the full POCKET/NEXUS control plane.
 
-PhantomSDK turns NOVA intelligence contracts into installable package surfaces. It is currently **contract-first**: manifests, starter SDK exports, release metadata, and verification gates exist before package publication claims.
-
-## Search Keywords
-
-NOVA SDK, AI agent SDK, MCP SDK, TypeScript AI SDK, Python AI SDK, local AI runtime package, connector client SDK, release manifest, artifact checksum verification, NOVA Build SDK.
-
-## Role
-
-PhantomSDK consumes:
-
-- `nova-intelligence` engine contracts
-- `nexus` MDFUC registry records
-- `x-mcp-skills` connector skills
-- `organism-bots-mcp-server` bot and MCP contracts
-
-It packages:
-
-- TypeScript SDK
-- Python SDK
-- MCP skill pack
-- Connector client
-- Runtime contracts
-- Release manifests
-- Artifact verification helpers
-
-## Quick Start
-
-Validate the SDK and release manifests:
-
-```bash
-python tools/validate_phantom_sdk.py
+```text
+Application / external client
+          │
+          ▼
+      PhantomSDK
+          │
+          ├── protocol/schema clients
+          ├── capability discovery
+          ├── compatibility checks
+          ├── receipt verification
+          └── release evidence verification
+          │
+          ▼
+NEXUS / POCKET / worker runtimes
 ```
 
-Inspect TypeScript starter exports:
+## NEXUS federation
 
-```bash
-cat packages/typescript/src/index.ts
+Declaration: [`ecosystem.surface.json`](ecosystem.surface.json).
+
+Primary responsibilities:
+
+```text
+schema.validate
+capability.client
+receipt.verify
+release.verify
+compatibility.check
 ```
 
-Inspect Python starter exports:
+PhantomSDK packages protocol interaction; it does not become the identity, policy or execution authority.
 
-```bash
-cat packages/python/phantom_sdk/__init__.py
+## Developer workflow
+
+A client integration should follow this shape:
+
+```text
+1. discover capability
+2. validate supported protocol versions
+3. construct typed request
+4. submit through POCKET/NEXUS gateway
+5. receive artifact/receipt
+6. verify receipt and correlation
+7. persist only application-owned state
 ```
 
-## Current Files
+## Core contracts
 
-- `phantom-sdk.manifest.json` — SDK role, package surfaces, exports, upstream sources, and proof gates.
-- `docs/PACKAGE_SURFACES.md` — first SDK surface map.
-- `docs/RELEASE_VERIFICATION.md` — v0.3.8 checksum and upload verification guide.
-- `packages/typescript/src/index.ts` — contract-first TypeScript manifest validators.
-- `packages/python/phantom_sdk/__init__.py` — contract-first Python manifest validators.
-- `tools/validate_phantom_sdk.py` — dependency-free SDK/release manifest validator.
-- `releases/v0.3.8/RELEASE_MANIFEST.json` — release artifact checksum map.
+PhantomSDK clients are expected to understand the shared NEXUS objects most useful to application developers:
 
-## Release Truth Line
+```text
+nexus.capability.v1
+nexus.task.v1
+nexus.plan.v1
+nexus.job.v1
+nexus.health.v1
+nexus.artifact.v1
+nexus.execution-receipt.v1
+nexus.compatibility.v1
+nexus.handoff.v1
+nexus.release-evidence.v1
+```
 
-The v0.3.8 zip artifacts are registered with checksums, but binary upload is still pending. Do not claim the zip files are committed until they exist in the repository or as GitHub Release assets and their SHA-256 values match `releases/v0.3.8/RELEASE_MANIFEST.json`.
+## Verification behavior
 
-## GitHub Discoverability
+Receipt verification should check:
 
-Recommended repository topics:
+```text
+schema/version
+request ID
+component/action
+status
+artifact references
+runtime timestamps
+digest/hash
+expected tenant/session correlation where present
+```
 
-`nova`, `sdk`, `typescript-sdk`, `python-sdk`, `ai-agents`, `mcp`, `model-context-protocol`, `developer-tools`, `local-ai`, `runtime-contracts`, `artifact-verification`.
+Compatibility checks should fail closed on protocol versions the SDK cannot safely interpret.
 
-## Next Gate
+## Release flow
 
-Add package build scripts, SDK validation tests, binary-safe release upload, and install docs for external builders.
+```text
+source SDK
+ -> tests
+ -> package/build
+ -> checksums
+ -> release manifest
+ -> publish
+ -> downstream install verification
+```
+
+Use repository-specific package/release commands for the language/runtime being published and keep the published version aligned with the protocol versions declared in `ecosystem.surface.json`.
+
+## NEXUS validation
+
+After changing shared protocol support, validate against the canonical registry:
+
+```bash
+# from ItsNotAILABS/nexus
+python tools/validate_ecosystem_protocols.py
+python tools/validate_ecosystem_registry.py
+python tools/production_gate.py
+```
+
+## Ecosystem
+
+- [NEXUS](https://github.com/ItsNotAILABS/nexus) — canonical protocol registry
+- [POCKET](https://github.com/ItsNotAILABS/pocket) — product gateway and tenancy
+- [POCKET Agent](https://github.com/ItsNotAILABS/pocket-agent) — execution client target
+- [Pocket Voice](https://github.com/ItsNotAILABS/pocket-voice-to-text) — conversational API target
+- [nova-connector-control-plane](https://github.com/ItsNotAILABS/nova-connector-control-plane) — external worker routing
+
+PhantomSDK is the clean developer edge of the ecosystem: **typed clients in, verified receipts out.**
