@@ -1,0 +1,25 @@
+{
+  "schema": "nexus.capability.v1",
+  "component": "phantom-sdk",
+  "repository": "ItsNotAILABS/PhantomSDK",
+  "role": "external-sdk-and-contract-packaging-plane",
+  "actions": [
+    "sdk.schema.validate",
+    "sdk.capability.client",
+    "sdk.receipt.verify",
+    "sdk.release.verify",
+    "sdk.compatibility.check"
+  ],
+  "risk_tiers": {
+    "sdk.schema.validate": "read",
+    "sdk.capability.client": "read",
+    "sdk.receipt.verify": "read",
+    "sdk.release.verify": "read",
+    "sdk.compatibility.check": "read"
+  },
+  "produces": ["nexus.compatibility.v1","nexus.release-evidence.v1"],
+  "consumes": ["nexus.capability.v1","nexus.artifact.v1","nexus.execution-receipt.v1","nexus.health.v1"],
+  "limits": {"credential_storage": false, "arbitrary_execution": false, "private_reasoning_export": false},
+  "proof": {"state": "source", "authority": "package manifests, validators and checksums"},
+  "authority": "ItsNotAILABS/nexus"
+}
